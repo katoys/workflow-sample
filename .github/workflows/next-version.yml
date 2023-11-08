@@ -1,0 +1,41 @@
+name: Next version (standard flow)
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: "base branch"
+        required: true
+        type: string
+      action_type:
+        description: "action type"
+        required: true
+        type: choice
+        options:
+          - "up major with snapshot"
+          - "up minor with snapshot"
+          - "up patch"
+          - "remove snapshot"
+
+permissions:
+  id-token: write
+  contents: read
+  packages: read
+
+jobs:
+  dump-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Print version
+        run: |
+          ./gradlew printCurrentVersion
