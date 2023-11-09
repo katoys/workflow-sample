@@ -18,15 +18,11 @@ on:
           - "up patch"
           - "remove snapshot"
 
-permissions:
-  id-token: write
-  contents: read
-  issues: write
-  pull-requests: write
-
 jobs:
   to-next-version:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
