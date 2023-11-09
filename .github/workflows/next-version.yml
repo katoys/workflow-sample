@@ -35,7 +35,7 @@ jobs:
       - name: Read version
         id: read_version
         run: |
-          echo "version=${./gradlew printCurrentVersion -q}" >> $GITHUB_OUTPUT
+          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
 
       - name: Add comment
         run: |
