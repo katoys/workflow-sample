@@ -18,11 +18,15 @@ on:
           - "up patch"
           - "remove snapshot"
 
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   to-next-version:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
