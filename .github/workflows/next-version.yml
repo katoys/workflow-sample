@@ -39,4 +39,4 @@ jobs:
 
       - name: Add comment
         run: |
-          gh issue comment 1 --body "${{ steps.read_version.outputs.version }|"
+          gh issue comment 1 --body "${{ steps.read_version.outputs.version }}"
