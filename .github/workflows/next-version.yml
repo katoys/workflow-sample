@@ -32,6 +32,10 @@ jobs:
           distribution: 'corretto'
           cache: 'gradle'
 
+      - name: Read version
+        run: |
+          echo "CURRENT_VERSION=$(./gradlew printCurrentVersion -q)" >> $GITHUB_ENV
+
       - name: Add comment
         run: |
-          gh issue comment --body "$(./gradlew printCurrentVersion -q)"
+          gh issue comment 1 --body "$(CURRENT_VERSION)"
