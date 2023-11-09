@@ -19,11 +19,13 @@ on:
           - "remove snapshot"
 
 permissions:
+  id-token: read
+  contents: read
   issues: write
   pull-requests: write
 
 jobs:
-  dump-context:
+  to-next-version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
