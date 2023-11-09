@@ -19,7 +19,7 @@ on:
           - "remove snapshot"
 
 permissions:
-  id-token: read
+  id-token: write
   contents: read
   issues: write
   pull-requests: write
