@@ -21,6 +21,8 @@ on:
 jobs:
   to-next-version:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -41,4 +43,4 @@ jobs:
 
       - name: Add comment
         run: |
-          gh issue comment "https://github.com/katoys/workflow-sample/issues/1" --body "${{ steps.read_version.outputs.version }}"
+          gh issue comment 1 --body "${{ steps.read_version.outputs.version }}"
