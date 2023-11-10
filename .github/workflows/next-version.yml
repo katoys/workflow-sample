@@ -79,4 +79,5 @@ jobs:
             --title "Versioning: ${{ steps.next_version.outputs.version }}" \
             --body "change version `${{ steps.current_version.outputs.version }}` to `${{ steps.next_version.outputs.version }}`" \
             --base ${{ github.event.inputs.base_branch }} \
-            --head ${{ steps.create_branch.outputs.branch_name }}
+            --head ${{ steps.create_branch.outputs.branch_name }} \
+            --revierws @katoys
