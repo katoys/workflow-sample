@@ -1,4 +1,4 @@
-name: Set version
+name: Set version (hotfix flow)
 
 on:
   workflow_dispatch:
@@ -9,9 +9,7 @@ on:
         type: choice
         options:
           - ""
-          - "up major with snapshot"
-          - "up minor with snapshot"
-          - "up patch"
+          - "up patch with snapshot"
           - "remove snapshot"
 
 permissions:
@@ -46,11 +44,7 @@ jobs:
         id: next_version
         run: |
           case "${{ github.event.inputs.action_type }}" in
-            "up major with snapshot")
-              ./gradlew versioning -Paction=up-major -Pmodifier=SNAPSHOT;;
-            "up minor with snapshot")
-              ./gradlew versioning -Paction=up-minor -Pmodifier=SNAPSHOT;;
-            "up patch")
+            "up patch with snapshot")
               ./gradlew versioning -Paction=up-patch;;
             "remove snapshot")
               ./gradlew versioning -Paction=remove-modifier -q;;
@@ -79,7 +73,7 @@ jobs:
         run: |
           gh pr create \
             --title "Versioning: ${{ steps.next_version.outputs.version }}" \
-            --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. by @${{ github.actor }}" \
+            --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. by @${{ github.actor }}\n\ncf https://sms-kaipoke.esa.io/posts/18939" \
             --base ${{ github.ref_name }} \
             --head ${{ steps.create_branch.outputs.branch_name }} \
             --label "versioning" \
