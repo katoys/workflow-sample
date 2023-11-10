@@ -82,4 +82,5 @@ jobs:
             --body "change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`" \
             --base ${{ github.ref_name }} \
             --head ${{ steps.create_branch.outputs.branch_name }} \
-            --revierws @katoys
+            --assignee ${{ github.actor }}
+            --reviewer @katoys
