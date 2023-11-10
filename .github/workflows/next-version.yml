@@ -65,8 +65,13 @@ jobs:
         run: |
           BRANCH_NAME=set-version-to-${{ steps.next_version.outputs.version }}
           git checkout -b $BRANCH_NAME
-          git push origin $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push
+        run: |
+          git add --all
+          git commit -m "Set version to ${{ steps.next_version.outputs.version }}"
+          git push origin ${{ steps.create_branch.outputs.branch_name }}
 
       - name: Create pull request
         run: |
