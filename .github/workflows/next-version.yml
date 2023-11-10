@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.base_branch }}
 
       - name: Setup JDK
         uses: actions/setup-java@v3
@@ -40,11 +42,42 @@ jobs:
           distribution: 'corretto'
           cache: 'gradle'
 
-      - name: Read version
-        id: read_version
+      - name: Read current version
+        id: current_version
         run: |
           echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
 
-      - name: Add comment
+      - name: Up version
+        id: next_version
+        if: ${{ github.event.inputs.action_type == 'up major with snapshot' }}
         run: |
-          gh issue comment 1 --body "${{ steps.read_version.outputs.version }}"
+          case ${{ github.event.inputs.action_type }} in
+            'up major with snapshot')
+              ./gradlew versioning -Paction=up-major -Pmodifier=SNAPSHOT;;
+            'up minor with snapshot')
+              ./gradlew versioning -Paction=up-minor -Pmodifier=SNAPSHOT;;
+            'up patch')
+              ./gradlew versioning -Paction=up-patch;;
+            'remove snapshot')
+              ./gradlew versioning -Paction=remove-modifier -q;;
+            *)
+              echo "Invalid action type: ${{ github.event.inputs.action_type }}"
+              exit 1;;
+          esac
+          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+      - name: Create branch
+        id: create_branch
+        run: |
+          BRANCH_NAME=set-version-to-${{ steps.next_version.outputs.version }}
+          git checkout -b $BRANCH_NAME
+          git push origin $BRANCH_NAME
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        run: |
+          gh pr create \
+            --title "Versioning: ${{ steps.next_version.outputs.version }}" \
+            --body "change version `${{ steps.current_version.outputs.version }}` to `${{ steps.next_version.outputs.version }}`" \
+            --base ${{ github.event.inputs.base_branch }} \
+            --head ${{ steps.create_branch.outputs.branch_name }}
