@@ -82,6 +82,6 @@ jobs:
             --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. by @${{ github.actor }}" \
             --base ${{ github.ref_name }} \
             --head ${{ steps.create_branch.outputs.branch_name }} \
-            --label "versioning"
+            --label "versioning" \
             --assignee ${{ github.actor }} \
             --reviewer katoys
