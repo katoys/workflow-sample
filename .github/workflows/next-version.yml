@@ -49,16 +49,15 @@ jobs:
 
       - name: Up version
         id: next_version
-        if: ${{ github.event.inputs.action_type == 'up major with snapshot' }}
         run: |
           case ${{ github.event.inputs.action_type }} in
-            'up major with snapshot')
+            "up major with snapshot")
               ./gradlew versioning -Paction=up-major -Pmodifier=SNAPSHOT;;
-            'up minor with snapshot')
+            "up minor with snapshot")
               ./gradlew versioning -Paction=up-minor -Pmodifier=SNAPSHOT;;
-            'up patch')
+            "up patch")
               ./gradlew versioning -Paction=up-patch;;
-            'remove snapshot')
+            "remove snapshot")
               ./gradlew versioning -Paction=remove-modifier -q;;
             *)
               echo "Invalid action type: ${{ github.event.inputs.action_type }}"
