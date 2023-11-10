@@ -32,7 +32,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.base_branch }}
+          ref: ${{ github.ref_name }}
 
       - name: Setup JDK
         uses: actions/setup-java@v3
@@ -77,6 +77,6 @@ jobs:
           gh pr create \
             --title "Versioning: ${{ steps.next_version.outputs.version }}" \
             --body "change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`" \
-            --base ${{ github.event.inputs.base_branch }} \
+            --base ${{ github.ref_name }} \
             --head ${{ steps.create_branch.outputs.branch_name }} \
             --revierws @katoys
