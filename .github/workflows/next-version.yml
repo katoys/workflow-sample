@@ -79,8 +79,8 @@ jobs:
         run: |
           gh pr create \
             --title "Versioning: ${{ steps.next_version.outputs.version }}" \
-            --body "change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. (by @${{ github.actor }})" \
+            --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. by @${{ github.actor }}" \
             --base ${{ github.ref_name }} \
             --head ${{ steps.create_branch.outputs.branch_name }} \
-            --assignee ${{ github.actor }}
+            --assignee ${{ github.actor }} \
             --reviewer katoys
