@@ -50,7 +50,7 @@ jobs:
       - name: Up version
         id: next_version
         run: |
-          case ${{ github.event.inputs.action_type }} in
+          case "${{ github.event.inputs.action_type }}" in
             "up major with snapshot")
               ./gradlew versioning -Paction=up-major -Pmodifier=SNAPSHOT;;
             "up minor with snapshot")
