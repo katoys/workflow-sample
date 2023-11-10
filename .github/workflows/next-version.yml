@@ -3,10 +3,6 @@ name: Next version (standard flow)
 on:
   workflow_dispatch:
     inputs:
-      base_branch:
-        description: "base branch"
-        required: true
-        type: string
       action_type:
         description: "action type"
         required: true
