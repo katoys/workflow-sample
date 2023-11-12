@@ -25,7 +25,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  set-version:
+  set-version-and-create-pr:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -100,6 +100,5 @@ jobs:
             --head ${{ steps.create_branch.outputs.branch_name }} \
             --label "versioning" \
             --assignee ${{ github.actor }} \
-            --reviewer katoys \
-            | read PR_URL
+            --reviewer katoys | read PR_URL
           echo "created pull request: ${PR_URL}" >> $GITHUB_STEP_SUMMARY
