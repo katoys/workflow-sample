@@ -1,4 +1,4 @@
-name: Create PR for versioning
+name: Create PR for hotfix
 
 on:
   workflow_dispatch:
@@ -34,39 +34,16 @@ jobs:
       - name: Next version
         id: next_version
         run: |
-          case "${{ github.event.inputs.action }}" in
-            "major version up")
-              ./gradlew versioning -Paction=up-major;;
-            "minor version up")
-              ./gradlew versioning -Paction=up-minor;;
-            "patch version up")
-              ./gradlew versioning -Paction=up-patch;;
-            "stay version")
-              ;;
-            *)
-              echo "Invalid action: ${{ github.event.inputs.action_type }}"
-              exit 1;;
-          esac
-          case "${{ github.event.inputs.is_snapshot }}" in
-            "true")
-              ./gradlew versioning -Paction=append-modifier -Pmodifier=SNAPSHOT;;
-            "false")
-              ./gradlew versioning -Paction=remove-modifier;;
-            *)
-              echo "Invalid is_snapshot: ${{ github.event.inputs.is_snapshot }}"
-              exit 1;;
-          esac
+          ./gradlew versioning -Paction=up-patch
           echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
 
       - name: Create branch
         id: create_branch
-        env:
-          GITHUB_SHA: ${{ github.sha }}
         run: |
-          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_${GITHUB_SHA:0:7}
+          BRANCH_NAME=hotfix/${{ steps.next_version.outputs.version }}
           git checkout -b $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-      
+
       - name: Commit and push
         run: |
           git config --global user.name "${{ github.actor }}"
@@ -78,10 +55,9 @@ jobs:
       - name: Create pull request
         run: |
           gh pr create \
-            --title "Versioning: ${{ steps.next_version.outputs.version }}" \
-            --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. by @${{ github.actor }}" \
+            --title "hotfix: ${{ steps.next_version.outputs.version }}" \
+            --template .github/pull_request_template.md \
             --base ${{ github.ref_name }} \
             --head ${{ steps.create_branch.outputs.branch_name }} \
-            --label "versioning" \
             --assignee ${{ github.actor }} \
-            --reviewer katoys
+            --draft
