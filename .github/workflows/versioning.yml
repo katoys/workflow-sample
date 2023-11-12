@@ -17,6 +17,7 @@ on:
         description: "is snapshot"
         required: true
         type: boolean
+        default: true
 
 permissions:
   id-token: write
