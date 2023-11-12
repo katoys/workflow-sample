@@ -36,6 +36,7 @@ jobs:
         run: |
           ./gradlew versioning -Paction=up-patch
           echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+          ./gradlew versioning -Paction=append-modifier -Pmodifier=SNAPSHOT
 
       - name: Create branch
         id: create_branch
@@ -56,8 +57,7 @@ jobs:
         run: |
           gh pr create \
             --title "hotfix: ${{ steps.next_version.outputs.version }}" \
-            --body ".github/pull_request_template.md" \
-            --base ${{ github.ref_name }} \
+            --template .github/pull_request_template.md \
+            --base main \
             --head ${{ steps.create_branch.outputs.branch_name }} \
-            --assignee ${{ github.actor }} \
-            --draft
+            --assignee ${{ github.actor }}
