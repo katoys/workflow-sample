@@ -79,7 +79,7 @@ jobs:
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_$(echo ${GITHUB_SHA:0:7})
+          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_${GITHUB_SHA:0:7}
           git checkout -b $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
       
