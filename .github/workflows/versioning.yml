@@ -65,9 +65,9 @@ jobs:
           esac
           case "${{ github.event.inputs.is_snapshot }}" in
             "true")
-              ./gradlew versioning -Pappend-modifier -Pmodifier=SNAPSHOT;;
+              ./gradlew versioning -Paction=append-modifier -Pmodifier=SNAPSHOT;;
             "false")
-              ./gradlew versioning -Premove-modifier;;
+              ./gradlew versioning -Paction=remove-modifier;;
             *)
               echo "Invalid is_snapshot: ${{ github.event.inputs.is_snapshot }}"
               exit 1;;
