@@ -1,0 +1,100 @@
+name: Create versioning pull request
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "action"
+        required: true
+        type: choice
+        options:
+          - ""
+          - "major version up"
+          - "minor version up"
+          - "patch version up"
+          - "stay version"
+      is_snapshot:
+        description: "is snapshot"
+        required: true
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  set-version:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Read current version
+        id: current_version
+        run: |
+          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+      - name: Next version
+        id: next_version
+        run: |
+          case "${{ github.event.inputs.action }}" in
+            "major version up")
+              ./gradlew versioning -Paction=up-major;;
+            "minor version up")
+              ./gradlew versioning -Paction=up-minor;;
+            "patch version up")
+              ./gradlew versioning -Paction=up-patch;;
+            "stay version")
+              ;;
+            *)
+              echo "Invalid action: ${{ github.event.inputs.action_type }}"
+              exit 1;;
+          esac
+          case "${{ github.event.inputs.is_snapshot }}" in
+            "true")
+              ./gradlew versioning -Pappend-modifier -Pmodifier=SNAPSHOT;;
+            "false")
+              ./gradlew versioning -Premove-modifier;;
+            *)
+              echo "Invalid is_snapshot: ${{ github.event.inputs.is_snapshot }}"
+              exit 1;;
+          esac
+          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+      - name: Create branch
+        id: create_branch
+        run: |
+          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_${{ github.sha }}
+          git checkout -b $BRANCH_NAME
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add --all
+          git commit -m "Set version to ${{ steps.next_version.outputs.version }}"
+          git push origin ${{ steps.create_branch.outputs.branch_name }}
+
+      - name: Create pull request
+        run: |
+          gh pr create \
+            --title "Versioning: ${{ steps.next_version.outputs.version }}" \
+            --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`. by @${{ github.actor }}" \
+            --base ${{ github.ref_name }} \
+            --head ${{ steps.create_branch.outputs.branch_name }} \
+            --label "versioning" \
+            --assignee ${{ github.actor }} \
+            --reviewer katoys
