@@ -77,7 +77,7 @@ jobs:
       - name: Create branch
         id: create_branch
         run: |
-          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_${{ github.sha }}
+          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_${${{ github.sha }}:0:7}
           git checkout -b $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
       
