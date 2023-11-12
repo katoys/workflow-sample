@@ -61,7 +61,7 @@ jobs:
       - name: Create pull request
         run: |
           gh pr create \
-            --title "release: ${{ steps.next_version.outputs.version }}" \
+            --title "release: ${{ steps.release_version.outputs.version }}" \
             --body-file .github/pull_request_template.md \
             --base main \
             --head ${{ steps.create_branch.outputs.branch_name }} \
