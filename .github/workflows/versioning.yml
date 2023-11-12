@@ -1,4 +1,4 @@
-name: Create versioning pull request
+name: Create PR for versioning
 
 on:
   workflow_dispatch:
