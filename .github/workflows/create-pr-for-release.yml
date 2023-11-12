@@ -62,8 +62,9 @@ jobs:
         run: |
           gh pr create \
             --title "release: ${{ steps.next_version.outputs.version }}" \
-            --body-file .github/pull_request_template.md \ # TODO: release template?
+            --body-file .github/pull_request_template.md \
             --base main \
             --head ${{ steps.create_branch.outputs.branch_name }} \
             --assignee ${{ github.actor }}
             # TODO: --draft
+          # TODO: release template?
