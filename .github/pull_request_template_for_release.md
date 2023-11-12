@@ -1,12 +1,6 @@
-## Release date
-
-- target date: yyyy-MM-dd
-
 ## Check list
 
-- [ ] deploy dev
-- [ ] dev QA
-- [ ] remove RC
-- [ ] deploy staging
-- [ ] staging QA
+- [ ] tested in dev
+- [ ] removed RC
 - [ ] created tag & release
+- [ ] tested in staging
