@@ -1,0 +1,41 @@
+name: Create tag and release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-tag-and-release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Release version
+        id: release_version
+        run: |
+          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        run: |
+          gh release create \
+            --title "v${{ steps.release_version.outputs.version }}" \
+            --target ${{ github.ref_name }} \
+            --generate-notes \
+            --prerelease \
+            v${{ steps.release_version.outputs.version }}

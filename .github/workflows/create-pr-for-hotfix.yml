@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  set-version:
+  create-pr-for-hotfix:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
