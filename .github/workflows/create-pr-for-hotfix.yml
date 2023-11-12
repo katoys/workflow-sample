@@ -2,22 +2,6 @@ name: Create PR for versioning
 
 on:
   workflow_dispatch:
-    inputs:
-      action:
-        description: "action"
-        required: true
-        type: choice
-        options:
-          - ""
-          - "major version up"
-          - "minor version up"
-          - "patch version up"
-          - "stay version"
-      is_snapshot:
-        description: "is snapshot"
-        required: true
-        type: boolean
-        default: true
 
 permissions:
   id-token: write
@@ -25,7 +9,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  create-pr-for-versioning:
+  set-version:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
