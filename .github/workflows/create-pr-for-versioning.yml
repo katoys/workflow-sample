@@ -68,7 +68,7 @@ jobs:
           esac
           case "${{ github.event.inputs.modifier }}" in
             "SNAPSHOT"|"RC")
-              ./gradlew versioning -Paction=append-modifier -Pmodifier=${{ github.event.inputs.modifier }};;
+              ./gradlew versioning -Paction=append-modifier -Pmodifier="${{ github.event.inputs.modifier }}";;
             "( none )")
               ./gradlew versioning -Paction=remove-modifier;;
             *)
