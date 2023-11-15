@@ -18,10 +18,9 @@ on:
         required: true
         type: choice
         options:
-          - "( none )"
           - "SNAPSHOT"
           - "RC"
-        default: "SNAPSHOT"
+          - "( none )"
 
 permissions:
   id-token: write
