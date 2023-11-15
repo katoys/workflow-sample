@@ -12,15 +12,16 @@ on:
           - "major version up"
           - "minor version up"
           - "patch version up"
-          - "stay version"
+          - "not increment"
       modifier:
         description: "version modifier"
         required: true
         type: choice
         options:
+          - "( none )"
           - "SNAPSHOT"
           - "RC"
-          - "( none )"
+        default: "SNAPSHOT"
 
 permissions:
   id-token: write
@@ -60,10 +61,10 @@ jobs:
               ./gradlew versioning -Paction=up-minor;;
             "patch version up")
               ./gradlew versioning -Paction=up-patch;;
-            "stay version")
+            "not increment")
               ;;
             *)
-              echo "Invalid action: ${{ github.event.inputs.action_type }}"
+              echo "Unknown action: ${{ github.event.inputs.action_type }}"
               exit 1;;
           esac
           case "${{ github.event.inputs.modifier }}" in
@@ -72,7 +73,7 @@ jobs:
             "( none )")
               ./gradlew versioning -Paction=remove-modifier;;
             *)
-              echo "Invalid modifier: ${{ github.event.inputs.modifier }}"
+              echo "Unknown modifier: ${{ github.event.inputs.modifier }}"
               exit 1;;
           esac
           echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
