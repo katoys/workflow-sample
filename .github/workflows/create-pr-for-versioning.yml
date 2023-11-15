@@ -20,7 +20,7 @@ on:
         options:
           - "SNAPSHOT"
           - "RC"
-          - "(none)"
+          - "( none )"
 
 permissions:
   id-token: write
@@ -67,10 +67,9 @@ jobs:
               exit 1;;
           esac
           case "${{ github.event.inputs.modifier }}" in
-            "SNAPSHOT")
-            "RC")
+            "SNAPSHOT"|"RC")
               ./gradlew versioning -Paction=append-modifier -Pmodifier=${{ github.event.inputs.modifier }};;
-            "(none)")
+            "( none )")
               ./gradlew versioning -Paction=remove-modifier;;
             *)
               echo "Invalid modifier: ${{ github.event.inputs.modifier }}"
