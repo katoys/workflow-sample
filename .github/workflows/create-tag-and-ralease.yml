@@ -5,12 +5,10 @@ on:
 
 permissions:
   id-token: write
-  contents: write
-  pull-requests: write
 
 jobs:
   create-tag-and-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GH_TOKEN: ${{ github.token }}
     steps:

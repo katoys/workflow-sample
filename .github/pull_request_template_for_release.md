@@ -1,6 +1,6 @@
 ## Check list
 
-- [ ] tested in dev
+- [ ] passed QA on dev
 - [ ] removed RC
 - [ ] created tag & release
-- [ ] tested in staging
+- [ ] passed QA on staging
