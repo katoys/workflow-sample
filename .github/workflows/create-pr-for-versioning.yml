@@ -129,5 +129,5 @@ jobs:
             --head ${{ steps.create_branch.outputs.branch_name }} \
             --label "versioning" \
             --assignee ${{ github.actor }} \
-            --reviewer katoys # TODO: temporary
+            --reviewer katoys \
             --draft

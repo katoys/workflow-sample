@@ -60,6 +60,6 @@ jobs:
             --body-file .github/pull_request_template.md \
             --base main \
             --head ${{ steps.create_branch.outputs.branch_name }} \
-            --assignee ${{ github.actor }}
-            --reviewer katoys # TODO: temporary
+            --assignee ${{ github.actor }} \
+            --reviewer katoys \
             --draft
