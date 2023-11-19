@@ -61,4 +61,5 @@ jobs:
             --base main \
             --head ${{ steps.create_branch.outputs.branch_name }} \
             --assignee ${{ github.actor }}
-            # TODO: --draft
+            --reviewer katoys # TODO: temporary
+            --draft
