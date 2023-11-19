@@ -77,6 +77,32 @@ jobs:
           esac
           echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
 
+      - name: Fetch node version
+        shell: bash
+        run: |
+          node_version=$(cat ./web/package.json | jq -r '.volta.node')
+          echo "node_version=${node_version}" >> $GITHUB_ENV
+
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Cache for npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: cache-npm-v1-web-${{ hashFiles('web/package-lock.json') }}
+          restore-keys: |
+            cache-npm-v1-web-
+            cache-npm-v1-
+      
+      - name: Versioning from
+        run: |
+          cd web
+          npm ci
+          npm version ${{ steps.next_version.outputs.version }} --no-git-tag-version
+
       - name: Create branch
         id: create_branch
         env:
