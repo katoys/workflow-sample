@@ -54,10 +54,10 @@ jobs:
       - name: Create pull request
         run: |
           gh pr create \
-            --title "hotfix: ${{ steps.next_version.outputs.version }}" \
+            --title "hotfix: ${{ steps.release_versioning.outputs.next_version }}" \
             --body-file .github/pull_request_template.md \
             --base main \
-            --head ${{ steps.create_branch.outputs.branch_name }} \
+            --head ${{ steps.git-operation.outputs.branch_name }} \
             --label "hotfix" \
             --assignee ${{ github.actor }} \
             --reviewer katoys \

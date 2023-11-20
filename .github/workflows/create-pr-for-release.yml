@@ -57,7 +57,7 @@ jobs:
             --title "Preparation for release: ${{ steps.release_versioning.outputs.next_version }}" \
             --body-file .github/pull_request_template_for_release.md \
             --base main \
-            --head ${{ steps.create_branch.outputs.branch_name }} \
+            --head ${{ steps.git-operation.outputs.branch_name }} \
             --label "release" \
             --assignee ${{ github.actor }} \
             --reviewer katoys \
