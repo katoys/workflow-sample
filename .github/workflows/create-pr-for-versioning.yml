@@ -55,8 +55,8 @@ jobs:
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          echo "branch_name=version-to-${{ steps.next_version.outputs.version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
-          echo "commit_message='Set version to ${{ steps.next_version.outputs.version }}'" >> $GITHUB_OUTPUT
+          echo "branch_name=version-to-${{ steps.versioning.outputs.next_version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
+          echo "commit_message='Set version to ${{ steps.versioning.outputs.next_version }}'" >> $GITHUB_OUTPUT
 
       - name: Git operation
         id: git-operation

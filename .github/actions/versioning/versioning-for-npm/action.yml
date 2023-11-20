@@ -11,9 +11,8 @@ runs:
   steps:
     - name: Fetch node version
       shell: bash
-      working-directory: web
       run: |
-        node_version=$(cat package.json | jq -r '.volta.node')
+        node_version=$(cat ./web/package.json | jq -r '.volta.node')
         echo "node_version=${node_version}" >> $GITHUB_ENV
 
     - name: Set up node
@@ -25,7 +24,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ~/.npm
-        key: cache-npm-v1-web-${{ hashFiles('web/package-lock.json') }}
+        key: cache-npm-v1-web-${{ hashFiles('./web/package-lock.json') }}
         restore-keys: |
           cache-npm-v1-web-
           cache-npm-v1-
