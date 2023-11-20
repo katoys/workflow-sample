@@ -19,29 +19,17 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Versioning for gradle (remove SNAPSHOT)
-        id: release_versioning
-        uses: ./.github/actions/versioning/versioning-for-gradle
-        with:
-          action: "not increment"
-          modifier: "( none )"
-
-      - name: Versioning for gradle (appned RC)
+      - name: Change version
         id: versioning
-        uses: ./.github/actions/versioning/versioning-for-gradle
+        uses: ./.github/actions/versioning/change-version
         with:
           action: "not increment"
-          modifier: RC
-
-      - name: Versioning for npm
-        uses: ./.github/actions/versioning/versioning-for-npm
-        with:
-          next_version: ${{ steps.versioning.outputs.next_version }}
+          modifier: "RC"
 
       - name: Preparation for git operation
         id: preparation_for_git_operation
         run: |
-          echo "branch_name=release/${{ steps.release_versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "branch_name=release/${{ steps.versioning.outputs.release_version }}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
 
       - name: Git operation
@@ -53,7 +41,7 @@ jobs:
       - name: Create pull request
         run: |
           gh pr create \
-            --title "Preparation for release: ${{ steps.release_versioning.outputs.next_version }}" \
+            --title "Preparation for release: ${{ steps.versioning.outputs.release_version }}" \
             --body-file .github/pull_request_template_for_release.md \
             --base main \
             --head ${{ steps.preparation_for_git_operation.outputs.branch_name }} \

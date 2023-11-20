@@ -1,5 +1,5 @@
-name: Set version (Gradle)
-description: "Set version (Gradle)"
+name: Change version
+description: "Change version"
 
 inputs:
   action:
@@ -16,6 +16,9 @@ outputs:
   next_version:
     description: "next version"
     value: ${{ steps.next_version.outputs.version }}
+  release_version:
+    description: "release version"
+    value: ${{ steps.release_version.outputs.version }}
 
 runs:
   using: "composite"
@@ -33,8 +36,8 @@ runs:
       run: |
         echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
 
-    - name: Set next version
-      id: next_version
+    - name: Set release version
+      id: release_version
       shell: bash
       run: |
         case "${{ inputs.action }}" in
@@ -45,11 +48,17 @@ runs:
           "patch version up")
             ./gradlew versioning -Paction=up-patch;;
           "not increment")
-            ;;
+            ./gradlew versioning -Paction=remove-modifier;;
           *)
             echo "Unknown action: ${{ inputs.action }}"
             exit 1;;
         esac
+        echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+    - name: Set next version
+      id: next_version
+      shell: bash
+      run: |
         case "${{ inputs.modifier }}" in
           "SNAPSHOT"|"RC")
             ./gradlew versioning -Paction=append-modifier -Pmodifier="${{ inputs.modifier }}";;
@@ -60,3 +69,23 @@ runs:
             exit 1;;
         esac
         echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: './web/package.json'
+
+    - name: Cache for npm
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: cache-npm-v1-web-${{ hashFiles('./web/package-lock.json') }}
+        restore-keys: |
+          cache-npm-v1-web-
+          cache-npm-v1-
+
+    - name: Set next version
+      shell: bash
+      working-directory: web
+      run: |
+        npm version ${{ inputs.next_version }} --no-git-tag-version

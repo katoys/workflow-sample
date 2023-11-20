@@ -38,17 +38,12 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Versioning for gradle
+      - name: Change version
         id: versioning
-        uses: ./.github/actions/versioning/versioning-for-gradle
+        uses: ./.github/actions/versioning/change-version
         with:
           action: ${{ github.event.inputs.action  }}
           modifier: ${{ github.event.inputs.modifier }}
-
-      - name: Versioning for npm
-        uses: ./.github/actions/versioning/versioning-for-npm
-        with:
-          next_version: ${{ steps.versioning.outputs.next_version }}
 
       - name: Preparation for git operation
         id: preparation_for_git_operation
