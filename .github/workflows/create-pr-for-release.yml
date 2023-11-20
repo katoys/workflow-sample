@@ -45,7 +45,6 @@ jobs:
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
 
       - name: Git operation
-        id: git-operation
         uses: ./.github/actions/versioning/git-operation
         with:
           branch_name: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
@@ -57,7 +56,7 @@ jobs:
             --title "Preparation for release: ${{ steps.release_versioning.outputs.next_version }}" \
             --body-file .github/pull_request_template_for_release.md \
             --base main \
-            --head ${{ steps.git-operation.outputs.branch_name }} \
+            --head ${{ steps.preparation_for_git_operation.outputs.branch_name }} \
             --label "release" \
             --assignee ${{ github.actor }} \
             --reviewer katoys \
