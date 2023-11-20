@@ -19,39 +19,39 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Setup JDK
-        uses: actions/setup-java@v3
+      - name: Versioning for gradle (incremnt patch version)
+        id: hotfix_versioning
+        uses: ./.github/actions/versioning/versioning-for-gradle
         with:
-          java-version: '17'
-          distribution: 'corretto'
-          cache: 'gradle'
+          action: "patch version up"
+          modifier: "( none )"
 
-      - name: Read current version
-        id: current_version
-        run: |
-          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+      - name: Versioning for gradle (appned SNAPSHOT)
+        id: versioning
+        uses: ./.github/actions/versioning/versioning-for-gradle
+        with:
+          action: "not increment"
+          modifier: SNAPSHOT
 
-      - name: Next version
-        id: next_version
-        run: |
-          ./gradlew versioning -Paction=up-patch
-          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
-          ./gradlew versioning -Paction=append-modifier -Pmodifier=SNAPSHOT
+      - name: Versioning for npm
+        uses: ./.github/actions/versioning/versioning-for-npm
+        with:
+          next_version: ${{ steps.versioning.outputs.next_version }}
 
-      - name: Create branch
-        id: create_branch
+      - name: Preparation for git operation
+        id: preparation_for_git_operation
+        env:
+          GITHUB_SHA: ${{ github.sha }}
         run: |
-          BRANCH_NAME=hotfix/${{ steps.next_version.outputs.version }}
-          git checkout -b $BRANCH_NAME
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "branch_name=hotfix/${{ steps.hotfix_versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
 
-      - name: Commit and push
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git add --all
-          git commit -m "Set version to ${{ steps.next_version.outputs.version }}"
-          git push origin ${{ steps.create_branch.outputs.branch_name }}
+      - name: Git operation
+        id: git-operation
+        uses: ./.github/actions/versioning/git-operation
+        with:
+          branch_name: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
+          commit_message: ${{ steps.preparation_for_git_operation.outputs.commit_message }}
 
       - name: Create pull request
         run: |
