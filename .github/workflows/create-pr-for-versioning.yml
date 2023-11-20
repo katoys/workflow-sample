@@ -38,95 +38,40 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Setup JDK
-        uses: actions/setup-java@v3
+      - name: Versioning for gradle
+        id: versioning
+        uses: ./.github/actions/versioning/versioning-for-gradle
         with:
-          java-version: '17'
-          distribution: 'corretto'
-          cache: 'gradle'
+          action: ${{ github.event.inputs.action  }}
+          modifier: ${{ github.event.inputs.modifier }}
 
-      - name: Read current version
-        id: current_version
-        run: |
-          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
-
-      - name: Next version
-        id: next_version
-        run: |
-          case "${{ github.event.inputs.action }}" in
-            "major version up")
-              ./gradlew versioning -Paction=up-major;;
-            "minor version up")
-              ./gradlew versioning -Paction=up-minor;;
-            "patch version up")
-              ./gradlew versioning -Paction=up-patch;;
-            "not increment")
-              ;;
-            *)
-              echo "Unknown action: ${{ github.event.inputs.action_type }}"
-              exit 1;;
-          esac
-          case "${{ github.event.inputs.modifier }}" in
-            "SNAPSHOT"|"RC")
-              ./gradlew versioning -Paction=append-modifier -Pmodifier="${{ github.event.inputs.modifier }}";;
-            "( none )")
-              ./gradlew versioning -Paction=remove-modifier;;
-            *)
-              echo "Unknown modifier: ${{ github.event.inputs.modifier }}"
-              exit 1;;
-          esac
-          echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
-
-      - name: Fetch node version
-        shell: bash
-        run: |
-          node_version=$(cat ./web/package.json | jq -r '.volta.node')
-          echo "node_version=${node_version}" >> $GITHUB_ENV
-
-      - name: Set up node
-        uses: actions/setup-node@v3
+      - name: Versioning for npm
+        uses: ./.github/actions/versioning/versioning-for-npm
         with:
-          node-version: ${{ env.node_version }}
-
-      - name: Cache for npm
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: cache-npm-v1-web-${{ hashFiles('web/package-lock.json') }}
-          restore-keys: |
-            cache-npm-v1-web-
-            cache-npm-v1-
+          next_version: ${{ steps.versioning.outputs.next_version }}
       
-      - name: Versioning from
-        run: |
-          cd web
-          npm ci
-          npm version ${{ steps.next_version.outputs.version }} --no-git-tag-version
-
-      - name: Create branch
-        id: create_branch
+      - name: Preparation for git operation
+        id: preparation_for_git_operation
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          BRANCH_NAME=version-to-${{ steps.next_version.outputs.version }}_${GITHUB_SHA:0:7}
-          git checkout -b $BRANCH_NAME
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "branch_name=version-to-${{ steps.next_version.outputs.version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
+          echo "commit_message='Set version to ${{ steps.next_version.outputs.version }}'" >> $GITHUB_OUTPUT
 
-      - name: Commit and push
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git add --all
-          git commit -m "Set version to ${{ steps.next_version.outputs.version }}"
-          git push origin ${{ steps.create_branch.outputs.branch_name }}
+      - name: Git operation
+        id: git-operation
+        uses: ./.github/actions/versioning/git-operation
+        with:
+          branch_name: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
+          commit_message: ${{ steps.preparation_for_git_operation.outputs.commit_message }}
 
       - name: Create pull request
         run: |
           gh pr create \
-            --title "Versioning: ${{ steps.next_version.outputs.version }}" \
-            --body "Change version \`${{ steps.current_version.outputs.version }}\` to \`${{ steps.next_version.outputs.version }}\`." \
+            --title "Versioning: ${{ steps.versioning.outputs.next_version }}" \
+            --body "Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`." \
             --base ${{ github.ref_name }} \
-            --head ${{ steps.create_branch.outputs.branch_name }} \
+            --head ${{ steps.preparation_for_git_operation.outputs.branch_name }} \
             --label "versioning" \
             --assignee ${{ github.actor }} \
             --reviewer katoys \

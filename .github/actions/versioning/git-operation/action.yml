@@ -1,0 +1,28 @@
+name: Git operation
+description: "git operation 'create branch' and 'commit' and 'push'."
+
+inputs:
+  branch_name:
+    description: "branch name"
+    required: true
+  commit_message:
+    description: "commit message"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create branch
+      id: create_branch
+      shell: bash
+      run: |
+        git checkout -b ${{ inputs.branch_name }}
+
+    - name: Commit and push
+      shell: bash
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git add --all
+        git commit -m '${{ inputs.commit_message }}'
+        git push origin ${{ inputs.branch_name }}

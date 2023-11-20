@@ -1,0 +1,62 @@
+name: Set version (Gradle)
+description: "Set version (Gradle)"
+
+inputs:
+  action:
+    description: "github.event.inputs.action"
+    required: true
+  modifier:
+    description: "github.event.inputs.modifier"
+    required: true
+
+outputs:
+  current_version:
+    description: "current version"
+    value: ${{ steps.current_version.outputs.version }}
+  next_version:
+    description: "next version"
+    value: ${{ steps.next_version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: "17"
+        distribution: "corretto"
+        cache: "gradle"
+
+    - name: Read current version
+      id: current_version
+      shell: bash
+      run: |
+        echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+
+    - name: Set next version
+      id: next_version
+      shell: bash
+      run: |
+        case "${{ inputs.action }}" in
+          "major version up")
+            ./gradlew versioning -Paction=up-major;;
+          "minor version up")
+            ./gradlew versioning -Paction=up-minor;;
+          "patch version up")
+            ./gradlew versioning -Paction=up-patch;;
+          "not increment")
+            ;;
+          *)
+            echo "Unknown action: ${{ inputs.action }}"
+            exit 1;;
+        esac
+        case "${{ inputs.modifier }}" in
+          "SNAPSHOT"|"RC")
+            ./gradlew versioning -Paction=append-modifier -Pmodifier="${{ inputs.modifier }}";;
+          "( none )")
+            ./gradlew versioning -Paction=remove-modifier;;
+          *)
+            echo "Unknown modifier: ${{ inputs.modifier }}"
+            exit 1;;
+        esac
+        echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
