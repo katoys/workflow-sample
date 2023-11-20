@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.ref_name }}
 
       - name: Versioning for gradle (incremnt patch version)
-        id: hotfix_versioning
+        id: release_versioning
         uses: ./.github/actions/versioning/versioning-for-gradle
         with:
           action: "patch version up"
@@ -40,10 +40,8 @@ jobs:
 
       - name: Preparation for git operation
         id: preparation_for_git_operation
-        env:
-          GITHUB_SHA: ${{ github.sha }}
         run: |
-          echo "branch_name=hotfix/${{ steps.hotfix_versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "branch_name=hotfix/${{ steps.release_versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
 
       - name: Git operation
@@ -60,6 +58,7 @@ jobs:
             --body-file .github/pull_request_template.md \
             --base main \
             --head ${{ steps.create_branch.outputs.branch_name }} \
+            --label "hotfix" \
             --assignee ${{ github.actor }} \
             --reviewer katoys \
             --draft
