@@ -52,6 +52,8 @@ jobs:
         run: |
           echo "branch_name=version-to-${{ steps.versioning.outputs.next_version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "pr_title=Versioning: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "pr_body=Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`." >> $GITHUB_OUTPUT
 
       - name: Git operation
         id: git-operation
@@ -66,14 +68,14 @@ jobs:
         with:
           base_branch: ${{ github.ref_name }}
           head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
-          title: "Versioning: ${{ steps.versioning.outputs.next_version }}"
+          title: "${{ steps.preparation_for_git_operation.outputs.pr_title }}"
           label: "versioning"
           reviewer: "katoys"
-          body: "Change version `${{ steps.versioning.outputs.current_version }}` to `${{ steps.versioning.outputs.next_version }}`."
+          body: "${{ steps.preparation_for_git_operation.outputs.pr_body }}"
 
       - name: Output summary
         run: |
-          echo "- Changed version: \\`${{ steps.versioning.outputs.current_version }}`\\ to \\`${{ steps.versioning.outputs.next_version }}\\`" >> $GITHUB_OUTPUT
-          echo "- Created pull request: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
-          echo "  - base branch: ${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          echo "  - head branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}" >> $GITHUB_OUTPUT
+          echo "- ${{ steps.preparation_for_git_operation.outputs.pr_body }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Created pull request: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "  - base branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "  - head branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}" >> $GITHUB_STEP_SUMMARY
