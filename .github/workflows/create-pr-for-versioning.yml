@@ -52,8 +52,8 @@ jobs:
         run: |
           echo "branch_name=version-to-${{ steps.versioning.outputs.next_version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
-          echo "title=Versioning: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
-          echo "description=Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`." >> $GITHUB_OUTPUT
+          echo "pr_title=Versioning: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "pr_body=Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`." >> $GITHUB_OUTPUT
 
       - name: Git operation
         id: git-operation
@@ -66,8 +66,8 @@ jobs:
         id: create_pull_request
         uses: ./.github/actions/versioning/create-draft-pull-request
         env:
-          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.title }}
-          PR_BODY: ${{ steps.preparation_for_git_operation.outputs.description }}
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
+          PR_BODY: ${{ steps.preparation_for_git_operation.outputs.pr_body }}
         with:
           base_branch: ${{ github.ref_name }}
           head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
@@ -78,7 +78,7 @@ jobs:
 
       - name: Output summary
         env:
-          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.title }}
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
         run: |
           echo "## Created pull request" >> $GITHUB_STEP_SUMMARY
           echo "[${PR_TITLE}](${{ steps.create_pull_request.outputs.url }})" >> $GITHUB_STEP_SUMMARY

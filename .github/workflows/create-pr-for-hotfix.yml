@@ -31,6 +31,7 @@ jobs:
         run: |
           echo "branch_name=hotfix/${{ steps.versioning.outputs.release_version }}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "pr_title=hotfix: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
 
       - name: Git operation
         uses: ./.github/actions/versioning/git-operation
@@ -39,13 +40,23 @@ jobs:
           commit_message: ${{ steps.preparation_for_git_operation.outputs.commit_message }}
 
       - name: Create pull request
+        id: create_pull_request
+        uses: ./.github/actions/versioning/create-draft-pull-request
+        env:
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
+        with:
+          base_branch: ${{ github.ref_name }}
+          head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
+          title: $PR_TITLE
+          label: "hotfix"
+          reviewer: "katoys"
+          body-file: .github/pull_request_template.md
+
+      - name: Output summary
+        env:
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
         run: |
-          gh pr create \
-            --title "hotfix: ${{ steps.versioning.outputs.release_version }}" \
-            --body-file .github/pull_request_template.md \
-            --base main \
-            --head ${{ steps.preparation_for_git_operation.outputs.branch_name }} \
-            --label "hotfix" \
-            --assignee ${{ github.actor }} \
-            --reviewer katoys \
-            --draft
+          echo "## Created pull request" >> $GITHUB_STEP_SUMMARY
+          echo "[${PR_TITLE}](${{ steps.create_pull_request.outputs.url }})" >> $GITHUB_STEP_SUMMARY
+          echo "- base branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- head branch: \`${{ steps.preparation_for_git_operation.outputs.branch_name }}\`" >> $GITHUB_STEP_SUMMARY
