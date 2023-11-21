@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "branch_name=hotfix/${{ steps.versioning.outputs.release_version }}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
-          echo "pr_title=hotfix: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "pr_title=hotfix: ${{ steps.versioning.outputs.release_version }}" >> $GITHUB_OUTPUT
 
       - name: Git operation
         uses: ./.github/actions/versioning/git-operation

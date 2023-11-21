@@ -54,7 +54,7 @@ jobs:
 
       - name: Output summary
         env:
-          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.title }}
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
         run: |
           echo "## Created pull request" >> $GITHUB_STEP_SUMMARY
           echo "[${PR_TITLE}](${{ steps.create_pull_request.outputs.url }})" >> $GITHUB_STEP_SUMMARY
