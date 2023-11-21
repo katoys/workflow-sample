@@ -37,9 +37,9 @@ runs:
       shell: bash
       run: |
         PR_URL=$(
-          if [ -n ${{ inputs.body }} ]; then
+          if [ -n "${{ inputs.body }}" ]; then
             gh pr create \
-              --title "${{ inputs.title }}"" \
+              --title "${{ inputs.title }}" \
               --body "${{ inputs.body }}" \
               --base ${{ inputs.base_branch }} \
               --head ${{ inputs.head_branch }} \
@@ -47,7 +47,7 @@ runs:
               --assignee ${{ github.actor }} \
               --reviewer ${{ inputs.reviewer }} \
               --draft
-          elif [ -z ${{ inputs.body != '' }} ]; then
+          elif [ -z "${{ inputs.body }}" ]; then
             gh pr create \
               --title "${{ inputs.title }}" \
               --body-file ${{ inputs.body_file }} \

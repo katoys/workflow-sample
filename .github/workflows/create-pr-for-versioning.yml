@@ -73,7 +73,7 @@ jobs:
 
       - name: Output summary
         run: |
-          echo "- Changed version: \`${{ steps.versioning.outputs.current_version }}`\ to \`${{ steps.versioning.outputs.next_version }}\`" >> $GITHUB_OUTPUT
+          echo "- Changed version: \\`${{ steps.versioning.outputs.current_version }}`\\ to \\`${{ steps.versioning.outputs.next_version }}\\`" >> $GITHUB_OUTPUT
           echo "- Created pull request: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
           echo "  - base branch: ${{ github.ref_name }}" >> $GITHUB_OUTPUT
           echo "  - head branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}" >> $GITHUB_OUTPUT
