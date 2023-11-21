@@ -47,7 +47,7 @@ runs:
               --assignee ${{ github.actor }} \
               --reviewer ${{ inputs.reviewer }} \
               --draft
-          elseif [ -z ${{ inputs.body != '' }} ]; then
+          elif [ -z ${{ inputs.body != '' }} ]; then
             gh pr create \
               --title ${{ inputs.title }} \
               --body-file ${{ inputs.body_file }} \
