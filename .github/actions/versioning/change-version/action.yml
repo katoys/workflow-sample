@@ -88,4 +88,4 @@ runs:
       shell: bash
       working-directory: web
       run: |
-        npm version ${{ inputs.next_version }} --no-git-tag-version
+        npm version ${{ steps.next_version.outputs.version }} --no-git-tag-version
