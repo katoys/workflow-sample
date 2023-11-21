@@ -1,0 +1,65 @@
+name: Git operation
+description: "git operation 'create branch' and 'commit' and 'push'."
+
+inputs:
+  base_branch:
+    description: "base branch"
+    required: true
+  head_branch:
+    description: "head branch"
+    required: true
+  title:
+    description: "PR title"
+    required: true
+  label:
+    description: "PR label"
+    required: true
+  reviewer:
+    description: "PR reviewer"
+    required: true
+  body:
+    description: "PR body (text)"
+    default: ""
+  body_file:
+    description: "PR body (file path)"
+    default: ""
+
+outputs:
+  url:
+    description: "PR url"
+    value: ${{ steps.create_pull_request.outputs.url }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create pull request
+      id: create_pull_request
+      shell: bash
+      run: |
+        PR_URL=$(
+          if [ -n ${{ inputs.body }} ]; then
+            gh pr create \
+              --title ${{ inputs.title }} \
+              --body ${{ inputs.body }} \
+              --base ${{ intpus.base_branch }} \
+              --head ${{ inputs.head_branch }} \
+              --label ${{ inputs.label }} \
+              --assignee ${{ github.actor }} \
+              --reviewer ${{ inputs.reviewer }} \
+              --draft
+          elseif [ -z ${{ inputs.body != '' }} ]; then
+            gh pr create \
+              --title ${{ inputs.title }} \
+              --body-file ${{ inputs.body_file }} \
+              --base ${{ intpus.base_branch }} \
+              --head ${{ inputs.head_branch }} \
+              --label ${{ inputs.label }} \
+              --assignee ${{ github.actor }} \
+              --reviewer ${{ inputs.reviewer }} \
+              --draft
+          else
+            echo "Error: body/body_file is not set."
+            exit 1
+          fi
+        )
+        echo "url=${PR_URL}" >> $GITHUB_OUTPUT
