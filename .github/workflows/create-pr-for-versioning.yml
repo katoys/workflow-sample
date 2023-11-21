@@ -52,8 +52,8 @@ jobs:
         run: |
           echo "branch_name=version-to-${{ steps.versioning.outputs.next_version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
           echo "commit_message='Set version to ${{ steps.versioning.outputs.next_version }}'" >> $GITHUB_OUTPUT
-          echo "pr_title='Versioning: ${{ steps.versioning.outputs.next_version }}'" >> $GITHUB_OUTPUT
-          echo "pr_body='Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`.'" >> $GITHUB_OUTPUT
+          echo "pr_title=Versioning: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "pr_body=Change version `${{ steps.versioning.outputs.current_version }}` to `${{ steps.versioning.outputs.next_version }}`." >> $GITHUB_OUTPUT
 
       - name: Git operation
         id: git-operation
