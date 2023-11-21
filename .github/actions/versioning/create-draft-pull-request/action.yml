@@ -41,7 +41,7 @@ runs:
             gh pr create \
               --title ${{ inputs.title }} \
               --body ${{ inputs.body }} \
-              --base ${{ intpus.base_branch }} \
+              --base ${{ inputs.base_branch }} \
               --head ${{ inputs.head_branch }} \
               --label ${{ inputs.label }} \
               --assignee ${{ github.actor }} \
