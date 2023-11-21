@@ -45,7 +45,7 @@ jobs:
         env:
           PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
         with:
-          base_branch: ${{ github.ref_name }}
+          base_branch: main
           head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
           title: $PR_TITLE
           label: "hotfix"
