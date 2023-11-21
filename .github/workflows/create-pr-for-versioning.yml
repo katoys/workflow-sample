@@ -61,13 +61,19 @@ jobs:
           commit_message: ${{ steps.preparation_for_git_operation.outputs.commit_message }}
 
       - name: Create pull request
+        id: create_pull_request
+        uses: ./.github/actions/versioning/create-draft-pull-request
+        with:
+          base_branch: ${{ github.ref_name }}
+          head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
+          title: "Versioning: ${{ steps.versioning.outputs.next_version }}"
+          label: "versioning"
+          reviewer: "katoys"
+          body: "Change version `${{ steps.versioning.outputs.current_version }}` to `${{ steps.versioning.outputs.next_version }}`."
+
+      - name: Output summary
         run: |
-          gh pr create \
-            --title "Versioning: ${{ steps.versioning.outputs.next_version }}" \
-            --body "Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`." \
-            --base ${{ github.ref_name }} \
-            --head ${{ steps.preparation_for_git_operation.outputs.branch_name }} \
-            --label "versioning" \
-            --assignee ${{ github.actor }} \
-            --reviewer katoys \
-            --draft
+          echo "- Changed version: \`${{ steps.versioning.outputs.current_version }}`\ to \`${{ steps.versioning.outputs.next_version }}\`" >> $GITHUB_OUTPUT
+          echo "- Created pull request: ${{ steps.versioning.outputs.next_version }}"
+          echo "  - base branch: ${{ github.ref_name }}"
+          echo "  - head branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}"
