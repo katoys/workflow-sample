@@ -52,8 +52,8 @@ jobs:
         run: |
           echo "branch_name=version-to-${{ steps.versioning.outputs.next_version }}_${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
           echo "commit_message=Set version to ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
-          echo "pr_title=Versioning: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
-          echo "pr_body=Change version \\`${{ steps.versioning.outputs.current_version }}\\` to \\`${{ steps.versioning.outputs.next_version }}\\`." >> $GITHUB_OUTPUT
+          echo "title=Versioning: ${{ steps.versioning.outputs.next_version }}" >> $GITHUB_OUTPUT
+          echo "description=Change version \`${{ steps.versioning.outputs.current_version }}\` to \`${{ steps.versioning.outputs.next_version }}\`." >> $GITHUB_OUTPUT
 
       - name: Git operation
         id: git-operation
@@ -65,17 +65,22 @@ jobs:
       - name: Create pull request
         id: create_pull_request
         uses: ./.github/actions/versioning/create-draft-pull-request
+        env:
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.title }}
+          PR_BODY: ${{ steps.preparation_for_git_operation.outputs.description }}
         with:
           base_branch: ${{ github.ref_name }}
           head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
-          title: "${{ steps.preparation_for_git_operation.outputs.pr_title }}"
+          title: $PR_TITLE
           label: "versioning"
           reviewer: "katoys"
-          body: "${{ steps.preparation_for_git_operation.outputs.pr_body }}"
+          body: $PR_BODY
 
       - name: Output summary
+        env:
+          DESCRIPTION: ${{ steps.preparation_for_git_operation.outputs.description }}
         run: |
-          echo "- ${{ steps.preparation_for_git_operation.outputs.pr_body }}" >> $GITHUB_STEP_SUMMARY
+          echo "- $DESCRIPTION" >> $GITHUB_STEP_SUMMARY
           echo "- Created pull request: ${{ steps.create_pull_request.outputs.url }}" >> $GITHUB_STEP_SUMMARY
           echo "  - base branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "  - head branch: \`${{ steps.preparation_for_git_operation.outputs.branch_name }}\`" >> $GITHUB_STEP_SUMMARY
