@@ -50,7 +50,7 @@ jobs:
           title: $PR_TITLE
           label: "hotfix"
           reviewer: "katoys"
-          body-file: .github/pull_request_template.md
+          body_file: .github/pull_request_template.md
 
       - name: Output summary
         env:

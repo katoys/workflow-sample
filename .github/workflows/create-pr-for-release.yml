@@ -43,14 +43,14 @@ jobs:
         id: create_pull_request
         uses: ./.github/actions/versioning/create-draft-pull-request
         env:
-          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.title }}
+          PR_TITLE: ${{ steps.preparation_for_git_operation.outputs.pr_title }}
         with:
           base_branch: ${{ github.ref_name }}
           head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
           title: $PR_TITLE
           label: "release"
           reviewer: "katoys"
-          body-file: .github/pull_request_template_for_release.md
+          body_file: .github/pull_request_template_for_release.md
 
       - name: Output summary
         env:
