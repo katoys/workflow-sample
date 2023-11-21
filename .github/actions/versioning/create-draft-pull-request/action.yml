@@ -39,21 +39,21 @@ runs:
         PR_URL=$(
           if [ -n ${{ inputs.body }} ]; then
             gh pr create \
-              --title ${{ inputs.title }} \
-              --body ${{ inputs.body }} \
+              --title "${{ inputs.title }}"" \
+              --body "${{ inputs.body }}" \
               --base ${{ inputs.base_branch }} \
               --head ${{ inputs.head_branch }} \
-              --label ${{ inputs.label }} \
+              --label "${{ inputs.label }}" \
               --assignee ${{ github.actor }} \
               --reviewer ${{ inputs.reviewer }} \
               --draft
           elif [ -z ${{ inputs.body != '' }} ]; then
             gh pr create \
-              --title ${{ inputs.title }} \
+              --title "${{ inputs.title }}" \
               --body-file ${{ inputs.body_file }} \
               --base ${{ inputs.base_branch }} \
               --head ${{ inputs.head_branch }} \
-              --label ${{ inputs.label }} \
+              --label "${{ inputs.label }}" \
               --assignee ${{ github.actor }} \
               --reviewer ${{ inputs.reviewer }} \
               --draft
