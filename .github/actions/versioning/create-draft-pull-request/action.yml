@@ -47,7 +47,7 @@ runs:
               --assignee ${{ github.actor }} \
               --reviewer ${{ inputs.reviewer }} \
               --draft
-          elif [ -z "${{ inputs.body }}" ]; then
+          elif [ -n "${{ inputs.body_file }}" ]; then
             gh pr create \
               --title "${{ inputs.title }}" \
               --body-file ${{ inputs.body_file }} \
