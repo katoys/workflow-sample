@@ -34,7 +34,7 @@ runs:
       id: current_version
       shell: bash
       run: |
-        echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+        echo "version=$(./gradlew printCurrentVersion -q | tail -1)" >> $GITHUB_OUTPUT
 
     - name: Set release version
       id: release_version
@@ -53,7 +53,7 @@ runs:
             echo "Unknown action: ${{ inputs.action }}"
             exit 1;;
         esac
-        echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+        echo "version=$(./gradlew printCurrentVersion -q | tail -1)" >> $GITHUB_OUTPUT
 
     - name: Set next version
       id: next_version
@@ -68,7 +68,7 @@ runs:
             echo "Unknown modifier: ${{ inputs.modifier }}"
             exit 1;;
         esac
-        echo "version=$(./gradlew printCurrentVersion -q)" >> $GITHUB_OUTPUT
+        echo "version=$(./gradlew printCurrentVersion -q | tail -1)" >> $GITHUB_OUTPUT
 
     - name: Setup node
       uses: actions/setup-node@v4
