@@ -1,6 +1,6 @@
 {
   "name": "sample-web",
-  "version": "2.5.0-RC",
+  "version": "2.5.0",
   "description": "sample project",
   "main": "index.js",
   "scripts": {
