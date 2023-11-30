@@ -14,6 +14,13 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Validate
+        run: |
+          if [ "${{ github.ref_type }}" != "tag" ]; then
+            echo "This workflow support tag only."
+            exit 1
+          fi
+
       - name: Checkout source
         uses: actions/checkout@v4
         with:
