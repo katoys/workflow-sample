@@ -38,3 +38,7 @@ jobs:
             --generate-notes \
             --prerelease \
             v${{ steps.release_version.outputs.version }}
+
+  run-release:
+    needs: create-release
+    uses: ./.github/workflows/release.yml
