@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       GH_TOKEN: ${{ github.token }}
+    outputs:
+      version: ${{ steps.release_version.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -44,4 +46,4 @@ jobs:
     needs: create-release
     uses: ./.github/workflows/release.yml
     with:
-      tag_name: ${{ steps.release_version.outputs.version }}
+      tag_name: ${{ needs.create-release.outputs.version }}
