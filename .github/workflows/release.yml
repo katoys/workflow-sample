@@ -46,4 +46,4 @@ jobs:
       - name: Show tag
         run: |
           echo "from GITHU_REF : '${GITHUB_REF#refs/*/}'"
-          echp "from inputs    : '${{ inputs.tag_name }}'"
+          echo "from inputs    : '${{ inputs.tag_name }}'"
