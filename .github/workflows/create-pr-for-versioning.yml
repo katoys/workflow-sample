@@ -73,7 +73,7 @@ jobs:
           head_branch: ${{ steps.preparation_for_git_operation.outputs.branch_name }}
           title: $PR_TITLE
           label: "versioning"
-          reviewer: "katoys"
+          reviewer: ${{ vars.PR_REVIEWERS_CSV }}
           body: $PR_BODY
 
       - name: Output summary
