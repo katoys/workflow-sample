@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - '**'
+  workflow_call:
+    inputs:
+      tag_name:
+        required: false
+        type: string
 
 permissions:
   id-token: write
@@ -37,3 +42,8 @@ jobs:
       - name: Read current version
         run: |
           ./gradlew printCurrentVersion -q | tail -1
+
+      - name: Show tag
+        run: |
+          echo "from GITHU_REF : '${GITHUB_REF#refs/*/}'"
+          echp "from inputs    : '${{ inputs.tag_name }}'"
