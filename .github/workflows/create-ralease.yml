@@ -38,8 +38,10 @@ jobs:
             --target ${{ github.ref_name }} \
             --generate-notes \
             --prerelease \
-            v${{ steps.release_version.outputs.version }}
+            ${{ steps.release_version.outputs.version }}
 
   run-release:
     needs: create-release
     uses: ./.github/workflows/release.yml
+    with:
+      tag_name: ${{ steps.release_version.outputs.version }}
